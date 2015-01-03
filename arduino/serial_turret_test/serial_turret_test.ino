@@ -1,5 +1,7 @@
 #include <ax12.h>
 #include <BioloidController.h>
+#include <Wire.h>
+
 
 #define BAUDRATE 9600
 #define PAN 1
@@ -24,15 +26,21 @@ void setup() {
     turret.interpolateStep();
     delay(3);
   }
+  Wire.begin(17); // join i2cbus with SDA on digital pin 17
+  Wire.onReceive(receiveEvent);
+}
+
+void loop() {
+    delay( 100 );
 }
 
 // 1-9 map to tilt
 // a-z map to pan
 // esc to quit
 
-void loop() {
-  if ( Serial.available() > 0 ) {
-     unsigned char inByte = Serial.read();
+void receiveEvent(int howMany) {
+  while( Wire.available() ) {
+     unsigned char inByte = Wire.read();
      
       if ( inByte >= 'a' && inByte <= 'z' ) {
           int pan = inByte - 'a';
@@ -40,6 +48,8 @@ void loop() {
           pan /= 'z' - 'a';
           pan = (pan>1023)?1023:pan;
           SetPosition(PAN,pan);
+          Serial.print("pan: ");
+          Serial.println( pan );
       }
 
       if ( inByte >= '1' && inByte <= '9' ) {
@@ -50,8 +60,9 @@ void loop() {
           tilt = (tilt>TILT_MAX)?TILT_MAX:tilt;
           tilt = (tilt<TILT_MIN)?TILT_MIN:tilt;
           SetPosition(TILT,tilt);
+          Serial.print("tilt: ");
+          Serial.println( tilt );
       }
   }
 }
-  
-  
+
