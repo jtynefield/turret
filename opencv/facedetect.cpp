@@ -63,7 +63,7 @@ void detectAndDraw( Mat& img, CascadeClassifier& cascade,
                     double scale ) {
     int i = 0;
     double t = 0;
-    vector<Rect> faces, faces2;
+    vector<Rect> faces;
     const static Scalar colors[] =  { CV_RGB(0,0,255),
                                       CV_RGB(0,128,255),
                                       CV_RGB(0,255,255),
@@ -78,6 +78,10 @@ void detectAndDraw( Mat& img, CascadeClassifier& cascade,
     cvtColor( img, gray, CV_BGR2GRAY );
     resize( gray, smallImg, smallImg.size(), 0, 0, INTER_LINEAR );
     equalizeHist( smallImg, smallImg );
+
+    double minv, maxv;
+    Point minp, maxp;
+    minMaxLoc( smallImg, &minv, &maxv, &minp, &maxp );
 
     t = (double)cvGetTickCount();
     cascade.detectMultiScale( smallImg, faces,
