@@ -30,6 +30,7 @@ int main( int argc, const char** argv ) {
 
     // todo, figure out how to make a fullscreen window.
     cvNamedWindow( "result", 1 );
+    cvNamedWindow( "debug", 1 );
 
     for(;;)  {
         IplImage* iplImg = cvQueryFrame( capture );
@@ -75,6 +76,13 @@ void detectAndDraw( Mat& img, CascadeClassifier& cascade,
 
     Mat gray, smallImg( cvRound (img.rows/scale), cvRound(img.cols/scale), CV_8UC1 );
 
+    Mat channels[3];
+
+    split( img, channels );
+    Mat black;
+    Mat debug;
+    imshow( "debug", channels[0] );
+
     cvtColor( img, gray, CV_BGR2GRAY );
     resize( gray, smallImg, smallImg.size(), 0, 0, INTER_LINEAR );
     equalizeHist( smallImg, smallImg );
@@ -109,11 +117,14 @@ void detectAndDraw( Mat& img, CascadeClassifier& cascade,
             center.y = cvRound((r->y + r->height*0.5)*scale);
             radius = cvRound((r->width + r->height)*0.25*scale);
             circle( img, center, radius, color, 3, 8, 0 );
+            maxp.x *= 2;
+            maxp.y *= 2;
+            circle(img, maxp, 4, CV_RGB(255,0,0), 3, 8, 0 );
         }
         else
             rectangle( img, cvPoint(cvRound(r->x*scale), cvRound(r->y*scale)),
                        cvPoint(cvRound((r->x + r->width-1)*scale), cvRound((r->y + r->height-1)*scale)),
                        color, 3, 8, 0);
     }
-    cv::imshow( "result", img );
+    imshow( "result", img );
 }
