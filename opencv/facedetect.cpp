@@ -13,9 +13,7 @@ using namespace cv;
 
 void detectAndDraw( Mat& img, CascadeClassifier& cascade,
                     double scale);
-
 string cascadeName = "./haarcascade_frontalface_alt.xml";
-string nestedCascadeName = "../../data/haarcascades/haarcascade_eye_tree_eyeglasses.xml";
 
 int main( int argc, const char** argv ) {
     CascadeClassifier cascade;
@@ -33,8 +31,6 @@ int main( int argc, const char** argv ) {
     // todo, figure out how to make a fullscreen window.
     cvNamedWindow( "result", 1 );
 
-    double scale = 1;
-    CascadeClassifier nestedCascade; // todo delete
     for(;;)  {
         IplImage* iplImg = cvQueryFrame( capture );
         Mat frame = iplImg;
@@ -47,7 +43,7 @@ int main( int argc, const char** argv ) {
         else
             flip( frame, frameCopy, 0 );
         
-        detectAndDraw( frameCopy, cascade, scale );
+        detectAndDraw( frameCopy, cascade, 2.0 );
         
         if( waitKey( 10 ) >= 0 )
             goto _cleanup_;
